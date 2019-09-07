@@ -45,6 +45,17 @@ services:
         networks:
             net1:
                 ipv4_address: 192.188.2.5
+    webapp:
+        build: webapp
+        ports:
+            - 3000:3000
+        environment:
+            - DB_URI=mongodb://192.188.2.10:27017/free5gc
+        depends_on:
+            - mongo
+        networks:
+            net1:
+                ipv4_address: 192.188.2.11
 networks:
     net1:
         ipam:
