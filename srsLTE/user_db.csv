@@ -1,0 +1,28 @@
+#
+# .csv to store UE's information in HSS
+# Kept in the following format: "Name,Auth,IMSI,Key,OP_Type,OP,AMF,SQN,QCI,IP_alloc"
+#
+# Name:     Human readable name to help distinguish UE's. Ignored by the HSS
+# IMSI:     UE's IMSI value
+# Auth:     Authentication algorithm used by the UE. Valid algorithms are XOR
+#           (xor) and MILENAGE (mil)
+# Key:      UE's key, where other keys are derived from. Stored in hexadecimal
+# OP_Type:  Operator's code type, either OP or OPc
+# OP/OPc:   Operator Code/Cyphered Operator Code, stored in hexadecimal
+# AMF:      Authentication management field, stored in hexadecimal
+# SQN:      UE's Sequence number for freshness of the authentication
+# QCI:      QoS Class Identifier for the UE's default bearer.
+# IP_alloc: IP allocation stratagy for the SPGW.
+#           With 'dynamic' the SPGW will automatically allocate IPs
+#           With a valid IPv4 (e.g. '172.16.0.2') the UE will have a statically assigned IP.
+#
+# Note: Lines starting by '#' are ignored and will be overwritten
+ue2,mil,001010123456780,00112233445566778899aabbccddeeff,opc,63bfa50ee6523365ff14c1f45f88737d,8000,000000001234,7,dynamic
+ue1,xor,001010123456789,00112233445566778899aabbccddeeff,opc,63bfa50ee6523365ff14c1f45f88737d,9001,000000001234,7,dynamic
+sim0,mil,901700000028080,724d0f31f2259622700437430b7b5c6e,opc,1140620b2805d84b44643bfcfbe6218c,8080,00000028155b,7,dynamic
+sim1,mil,901700000028081,39b131167cb19955df88a9d1ba8b8650,opc,fd553986cc62edcc53a91610ef8e31eb,8081,0000002808b5,7,dynamic
+sim2,mil,901700000028082,2e175ced46a8dd09790a8889d99041f0,opc,6a38d1131ec3a6eee307001430c6027b,8082,000000280d94,7,dynamic
+sim3,mil,901700000028083,ce00662d50b361c3442384ec4dce8718,opc,892deabd195d465cbd9cfc4937222c4c,8083,000000280858,7,dynamic
+sim4,mil,901700000028084,a191f0aa8e9927aa10d19f9ffbffdae3,opc,b50406aa4a63646d1c49c159006e59f3,8084,000000280845,7,dynamic
+sim5,mil,901700000028085,39514fdfccbe9295f7d04c2580566fe2,opc,cd28c6a874a57a5e654b68172aad08dc,8085,000000280852,7,dynamic
+

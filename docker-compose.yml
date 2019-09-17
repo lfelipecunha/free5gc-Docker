@@ -1,4 +1,4 @@
-version: "3.0"
+version: "3"
 services:
     mongo:
         image: mongo
@@ -30,7 +30,6 @@ services:
         networks:
             net1:
                 ipv4_address: 192.188.2.4
-            net2:
     hss:
         build: hss
         depends_on:
@@ -42,6 +41,7 @@ services:
         build: pcrf
         depends_on:
             - mongo
+            - smf
         networks:
             net1:
                 ipv4_address: 192.188.2.5
@@ -56,12 +56,23 @@ services:
         networks:
             net1:
                 ipv4_address: 192.188.2.11
+    enb:
+        build: srsLTE
+        depends_on:
+            - upf
+            - smf
+        privileged: true
+        volumes:
+            - /dev/bus/usb:/dev/bus/usb
+        networks:
+            net1:
+                ipv4_address: 192.188.2.253
 networks:
     net1:
         ipam:
             driver: default
             config:
-                - subnet: "192.188.2.0/24"
+                - subnet: 192.188.2.0/24
     net2:
         ipam:
             driver: default
