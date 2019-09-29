@@ -17,11 +17,11 @@ services:
         privileged: true
         depends_on:
             - mongo
-        networks:
-            net1:
-                ipv4_address: 192.188.2.6
-            net2:
-                ipv4_address: 45.45.0.2
+        devices:
+              - "/dev/net/tun:/dev/net/tun"
+        cap_add:
+              - NET_ADMIN
+        network_mode: "host"
     smf:
         build: smf
         depends_on:
@@ -62,20 +62,24 @@ services:
             - upf
             - smf
             - amf
+        #    - epc
         privileged: true
         volumes:
             - /dev/bus/usb:/dev/bus/usb
         networks:
             net1:
                 ipv4_address: 192.188.2.253
+#    epc:
+#        build:
+#            context: srsLTE
+#            dockerfile: Dockerfile.epc
+#        privileged: true
+#        networks:
+#            net1:
+#                ipv4_address: 192.188.2.2
 networks:
     net1:
         ipam:
             driver: default
             config:
                 - subnet: 192.188.2.0/24
-    net2:
-        ipam:
-            driver: default
-            config:
-                - subnet: "45.45.0.0/24"
