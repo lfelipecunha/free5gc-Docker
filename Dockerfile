@@ -9,5 +9,6 @@ RUN go get -u -v "golang.org/x/sys/unix"
 
 RUN apt-get -y install autoconf libtool gcc pkg-config git flex bison libsctp-dev libgnutls28-dev libgcrypt-dev libssl-dev libidn11-dev libmongoc-dev libbson-dev libyaml-dev
 
-RUN git clone https://bitbucket.org/nctu_5g/free5gc.git
+#RUN git clone https://bitbucket.org/nctu_5g/free5gc.git
+COPY free5gc /free5gc
 RUN cd free5gc && autoreconf -iv && ./configure --prefix=`pwd`/install && make -j `nproc` && make install

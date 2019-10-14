@@ -1,0 +1,32 @@
+### For reference, see `free5gc.conf`
+
+logger:
+    file: @LOCALSTATE_DIR@/log/free5gc/smf.log
+    trace: 
+        app: 1
+        diameter: 1
+        gtp: 1
+        pfcp: 1
+        sbi: 1
+
+parameter:
+
+smf:
+    freeDiameter: smf.conf
+
+    pfcp:
+        - 127.0.0.10
+        - ::1
+
+    upf:
+      - addr: 127.0.0.8
+
+    ue_pool:
+      - addr: 45.45.0.1/16
+      - addr: cafe::1/64
+    
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+      - 2001:4860:4860::8888
+      - 2001:4860:4860::8844
