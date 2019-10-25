@@ -22,6 +22,16 @@ services:
         cap_add:
               - NET_ADMIN
         network_mode: "host"
+    upf2:
+        build: upf2
+        privileged: true
+        depends_on:
+            - mongo
+        devices:
+              - "/dev/net/tun:/dev/net/tun"
+        networks:
+            net1:
+                ipv4_address: 192.188.2.20
     smf:
         build: smf
         depends_on:

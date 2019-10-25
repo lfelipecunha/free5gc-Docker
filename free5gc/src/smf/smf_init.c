@@ -12,8 +12,10 @@
 #include "smf_sm.h"
 
 static thread_id smf_thread;
+static thread_id smf_change_upf_thread;
 
 static void *THREAD_FUNC smf_main(thread_id id, void *data);
+static void *THREAD_FUNC smf_change_upf(thread_id id, void *data);
 
 static int initialized = 0;
 
@@ -39,6 +41,9 @@ status_t smf_initialize()
     rv = thread_create(&smf_thread, NULL, smf_main, NULL);
     if (rv != CORE_OK) return rv;
 
+    rv = thread_create(&smf_change_upf_thread, NULL, smf_change_upf, NULL);
+    if (rv != CORE_OK) return rv;
+
     initialized = 1;
 
     return CORE_OK;
@@ -49,12 +54,48 @@ void smf_terminate(void)
     if (!initialized) return;
 
     thread_delete(smf_thread);
+    thread_delete(smf_change_upf_thread);
 
     pfcp_xact_final();
-    
+
     smf_fd_final();
 
     smf_context_final();
+}
+
+
+static void *THREAD_FUNC smf_change_upf(thread_id id, void *data)
+{
+    c_time_t prev_tm, now_tm;
+    ln_t *first, *second;
+    char actual = '0';
+
+    prev_tm = time_now();
+
+    while ((!thread_should_stop()))
+    {
+            now_tm = time_now();
+            if (now_tm - prev_tm > (1000 * 1000)) {
+		char new[1];
+		FILE *file = fopen("/tmp/upf", "r");
+		fread(new, 1, sizeof new, file);
+		fclose(file);
+		if (new[0] != actual) {
+		    d_info("CHANGING UPF FROM [%c] TO [%c]", actual, new[0]);
+		    first = list_first(&smf_self()->upf_n4_list);
+		    if (first->next) {
+		        second = first->next;
+		        second->prev = NULL;
+		        second->next = first;
+		        first->next = NULL;
+		        first->prev = second;
+		    }
+		    actual = new[0];
+		}
+	    	prev_tm = now_tm;
+	    }
+    }
+    return NULL;
 }
 
 static void *THREAD_FUNC smf_main(thread_id id, void *data)
@@ -67,10 +108,10 @@ static void *THREAD_FUNC smf_main(thread_id id, void *data)
     memset(&event, 0, sizeof(event_t));
 
     smf_self()->queue_id = event_create(MSGQ_O_NONBLOCK);
-    d_assert(smf_self()->queue_id, return NULL, 
+    d_assert(smf_self()->queue_id, return NULL,
             "SMF event queue creation failed");
     tm_service_init(&smf_self()->tm_service);
-    pfcp_xact_init(&smf_self()->tm_service, 
+    pfcp_xact_init(&smf_self()->tm_service,
             SMF_EVT_N4_T3_RESPONSE, SMF_EVT_N4_T3_RESPONSE);
     fsm_create(&smf_sm, smf_state_initial, smf_state_final);
     fsm_init(&smf_sm, 0);
@@ -80,7 +121,7 @@ static void *THREAD_FUNC smf_main(thread_id id, void *data)
 #define EVENT_LOOP_TIMEOUT 10   /* 10ms */
     while ((!thread_should_stop()))
     {
-        sock_select_loop(EVENT_LOOP_TIMEOUT); 
+        sock_select_loop(EVENT_LOOP_TIMEOUT);
         do
         {
             rv = event_recv(smf_self()->queue_id, &event);
