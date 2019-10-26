@@ -2,16 +2,13 @@ version: "2.0"
 services:
     mongo:
         image: mongo
-        networks:
-            net1:
-                ipv4_address: 192.188.2.10
+        network_mode: "host"
     amf:
-        build: amf
+        build: .
         depends_on:
             - mongo
-        networks:
-            net1:
-                ipv4_address: 192.188.2.2
+        network_mode: "host"
+        command: ./bin/amf
     upf:
         build: upf
         privileged: true
@@ -23,63 +20,51 @@ services:
               - NET_ADMIN
         network_mode: "host"
     smf:
-        build: smf
+        build: .
         depends_on:
             - mongo
             - upf
-        networks:
-            net1:
-                ipv4_address: 192.188.2.4
-    hss:
-        build: hss
+        network_mode: "host"
+        command: ./bin/smf
+    ausf:
+        build: .
         depends_on:
             - mongo
-        networks:
-            net1:
-                ipv4_address: 192.188.2.3
-    pcrf:
-        build: pcrf
-        depends_on:
-            - mongo
-            - smf
-        networks:
-            net1:
-                ipv4_address: 192.188.2.5
-    webapp:
-        build: webapp
-        ports:
-            - 3000:3000
-        environment:
-            - DB_URI=mongodb://192.188.2.10:27017/free5gc
-        depends_on:
-            - mongo
-        networks:
-            net1:
-                ipv4_address: 192.188.2.11
-    enb:
-        build: srsLTE
-        depends_on:
             - upf
-            - smf
-            - amf
-        #    - epc
-        privileged: true
-        volumes:
-            - /dev/bus/usb:/dev/bus/usb
-        networks:
-            net1:
-                ipv4_address: 192.188.2.253
-#    epc:
-#        build:
-#            context: srsLTE
-#            dockerfile: Dockerfile.epc
-#        privileged: true
-#        networks:
-#            net1:
-#                ipv4_address: 192.188.2.2
-networks:
-    net1:
-        ipam:
-            driver: default
-            config:
-                - subnet: 192.188.2.0/24
+        network_mode: "host"
+        command: ./bin/ausf
+    nrf:
+        build: .
+        depends_on:
+            - mongo
+            - upf
+        network_mode: "host"
+        command: ./bin/nrf
+    nssf:
+        build: .
+        depends_on:
+            - mongo
+            - upf
+        network_mode: "host"
+        command: ./bin/nssf
+    pcf:
+        build: .
+        depends_on:
+            - mongo
+            - upf
+        network_mode: "host"
+        command: ./bin/pcf
+    udm:
+        build: .
+        depends_on:
+            - mongo
+            - upf
+        network_mode: "host"
+        command: ./bin/udm
+    udr:
+        build: .
+        depends_on:
+            - mongo
+            - upf
+        network_mode: "host"
+        command: ./bin/udr

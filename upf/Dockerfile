@@ -1,10 +1,11 @@
 From free5gc-base
 
-COPY free5gc.conf /free5gc/install/etc/free5gc/free5gc.conf
-COPY setup.sh /root/setup.sh
-RUN chmod +x /root/setup.sh
+RUN apt -y update
+RUN apt -y install git gcc cmake autoconf libtool pkg-config libmnl-dev libyaml-dev
+RUN go get -u github.com/sirupsen/logrus
 
-COPY iptables.sh /root/iptables.sh
-RUN chmod +x /root/iptables.sh
+WORKDIR $GOPATH/src/free5gc/src/upf
 
-CMD /root/setup.sh; /root/iptables.sh; /free5gc/free5gc-upfd
+RUN mkdir build; cd build; cmake ..; make -j `nproc`
+
+CMD ./build/bin/free5gc-upfd

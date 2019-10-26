@@ -1,4 +1,0 @@
-EXTRA_DIST = free5gc.in
-
-MAINTAINERCLEANFILES = Makefile.in 
-MOSTLYCLEANFILES = *.stackdump

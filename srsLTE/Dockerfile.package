@@ -1,8 +1,0 @@
-FROM ubuntu:18.04
-
-RUN apt-get update && apt-get install -y software-properties-common && add-apt-repository ppa:srslte/releases && apt-get update && apt-get install -y srslte
-
-RUN DEBIAN_FRONTEND=noninteractive apt install -y tzdata
-RUN apt-get install -y uhd-host
-RUN uhd_images_downloader
-CMD bash
