@@ -8,4 +8,6 @@ WORKDIR $GOPATH/src/free5gc/src/upf
 
 RUN mkdir build; cd build; cmake ..; make -j `nproc`
 
+COPY upfcfg.yaml config/upfcfg.yaml
+
 CMD ./build/bin/free5gc-upfd

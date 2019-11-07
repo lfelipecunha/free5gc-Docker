@@ -32,4 +32,5 @@ RUN apt-get install gcc -y
 RUN go build -o bin/nrf -x src/nrf/nrf.go
 RUN go build -o bin/udr -x src/udr/udr.go
 
+COPY smfcfg.conf config/smfcfg.conf
 CMD bash
