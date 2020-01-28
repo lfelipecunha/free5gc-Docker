@@ -19,7 +19,7 @@
     "lodash": "^4.17.4",
     "lusca": "^1.5.1",
     "method-override": "^2.3.9",
-    "mongoose": "^4.11.12",
+    "mongoose": "^5.7.5",
     "mongoose-long": "^0.1.1",
     "morgan": "^1.8.2",
     "next": "^3.2.2",
