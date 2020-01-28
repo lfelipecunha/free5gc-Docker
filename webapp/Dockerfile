@@ -1,6 +1,7 @@
-From free5gc-base
+From ubuntu:18.04
 
-RUN apt-get install -y curl
+COPY webui /free5gc/webui
+RUN apt-get update && apt-get install -y curl
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 
