@@ -2,6 +2,8 @@ version: "2.0"
 services:
     mongo:
         image: mongo
+        volumes:
+            - ./database:/data/db
         networks:
             net1:
                 ipv4_address: 192.188.2.10
