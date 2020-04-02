@@ -1,5 +1,17 @@
 version: "2.0"
 services:
+    load-balancer:
+        build: load-balancer
+        privileged: true
+        cap_add:
+              - NET_ADMIN
+        depends_on:
+            - amf
+        networks:
+            net1:
+                ipv4_address: 192.188.2.2
+            net2:
+                ipv4_address: 192.188.3.2
     mongo:
         image: mongo
         volumes:
@@ -9,11 +21,22 @@ services:
                 ipv4_address: 192.188.2.10
     amf:
         build: amf
+        cap_add:
+            - NET_ADMIN
         depends_on:
             - mongo
         networks:
             net1:
-                ipv4_address: 192.188.2.2
+                ipv4_address: 192.188.2.21
+    amf2:
+        build: amf
+        cap_add:
+            - NET_ADMIN
+        depends_on:
+            - mongo
+        networks:
+            net1:
+                ipv4_address: 192.188.2.22
     upf:
         build: upf
         privileged: true
@@ -63,14 +86,14 @@ services:
         depends_on:
             - upf
             - smf
-            - amf
+            - load-balancer
         #    - epc
         privileged: true
         volumes:
             - /dev/bus/usb:/dev/bus/usb
         networks:
-            net1:
-                ipv4_address: 192.188.2.253
+            net2:
+                ipv4_address: 192.188.3.253
 #    epc:
 #        build:
 #            context: srsLTE
@@ -85,3 +108,8 @@ networks:
             driver: default
             config:
                 - subnet: 192.188.2.0/24
+    net2:
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.188.3.0/24
