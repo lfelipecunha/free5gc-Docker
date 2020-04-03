@@ -25,6 +25,8 @@ services:
             - NET_ADMIN
         depends_on:
             - mongo
+        environment:
+            - AMF_NAME=amf
         networks:
             net1:
                 ipv4_address: 192.188.2.21
@@ -37,6 +39,8 @@ services:
         networks:
             net1:
                 ipv4_address: 192.188.2.22
+        environment:
+            - AMF_NAME=amf2
     upf:
         build: upf
         privileged: true
