@@ -12,4 +12,9 @@ RUN apt-get -y install autoconf libtool gcc pkg-config git flex bison libsctp-de
 #RUN git clone https://bitbucket.org/nctu_5g/free5gc.git
 COPY free5gc /free5gc
 RUN cd free5gc/support/freeDiameter && ./make_certs.sh .
-RUN cd free5gc && autoreconf -iv && ./configure --prefix=`pwd`/install && make -j `nproc` && make install
+#RUN apt-get update && apt-get install -y cmake
+
+RUN cd free5gc && autoreconf -iv
+#RUN cd free5gc/lib/freeDiameter-1.2.1 && cmake .
+
+RUN cd free5gc && ./configure --prefix=`pwd`/install && make -j `nproc` && make install

@@ -77,7 +77,7 @@ dnl Check Endian
 AC_C_BIGENDIAN
 
 #############################
-#### From FreeDiameter CMAKE 
+#### From FreeDiameter CMAKE
 #############################
 touch include/freeDiameter/version.h
 rm -f libfdcore/fdd.tab.y
@@ -157,7 +157,7 @@ fi
 AC_SEARCH_LIBS([gnutls_hash], [gnutls],
              [AC_DEFINE(GNUTLS_VERSION_210, 1,
               [Define to 1 if you have gnutls 2.10 installed])], [])
-AC_SEARCH_LIBS([gnutls_transport_set_vec_push_function], [gnutls], 
+AC_SEARCH_LIBS([gnutls_transport_set_vec_push_function], [gnutls],
              [AC_DEFINE(GNUTLS_VERSION_212, 1,
               [Define to 1 if you have gnutls 2.10 installed])], [])
 AC_SEARCH_LIBS([gnutls_x509_trust_list_verify_crt], [gnutls],
@@ -197,6 +197,7 @@ fi
 AC_CONFIG_FILES([include/freeDiameter/freeDiameter-host.h:include/freeDiameter/freeDiameter-host.hin])
 AC_CONFIG_FILES([libfdproto/Makefile])
 AC_CONFIG_FILES([libfdcore/Makefile])
+AC_CONFIG_FILES([extensions/acl_wl/Makefile])
 AC_CONFIG_FILES([extensions/dbg_msg_dumps/Makefile])
 AC_CONFIG_FILES([extensions/dict_rfc5777/Makefile])
 AC_CONFIG_FILES([extensions/dict_mip6i/Makefile])
