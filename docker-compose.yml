@@ -12,6 +12,8 @@ services:
                 ipv4_address: 192.188.2.2
             net2:
                 ipv4_address: 192.188.3.2
+        ports:
+            - "3868:3868"
     mongo:
         image: mongo
         volumes:
@@ -40,7 +42,7 @@ services:
             net1:
                 ipv4_address: 192.188.2.22
         environment:
-            - AMF_NAME=amf2
+            - AMF_NAME=amf1
     upf:
         build: upf
         privileged: true
@@ -63,6 +65,8 @@ services:
         build: hss
         depends_on:
             - mongo
+            - amf
+            - amf2
         networks:
             net1:
                 ipv4_address: 192.188.2.3
