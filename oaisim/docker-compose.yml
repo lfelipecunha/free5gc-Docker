@@ -1,0 +1,33 @@
+version: "2"
+services:
+    ue:
+        build: ue
+#        depends_on:
+#            - enb
+        environment:
+            - eNB_IP=10.0.0.2
+            - PHYSICAL_INTERFACE=eth0
+        privileged: true
+        cap_add:
+            - NET_ADMIN
+        networks:
+            net1:
+                ipv4_address: 10.0.0.3
+    enb:
+        build: enb
+        environment:
+            - UE_IP=10.0.0.3
+            - PHYSICAL_INTERFACE=eth0
+            - MME_IP=192.168.1.5
+        privileged: true
+        cap_add:
+            - NET_ADMIN
+        networks:
+            net1:
+                ipv4_address: 10.0.0.2
+networks:
+    net1:
+        ipam:
+            config:
+                - subnet: 10.0.0.0/24
+
