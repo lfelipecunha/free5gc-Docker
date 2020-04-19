@@ -5,29 +5,29 @@ services:
 #        depends_on:
 #            - enb
         environment:
-            - eNB_IP=10.0.0.2
+            - eNB_IP=192.168.3.2
             - PHYSICAL_INTERFACE=eth0
         privileged: true
         cap_add:
             - NET_ADMIN
         networks:
             net1:
-                ipv4_address: 10.0.0.3
+                ipv4_address: 192.168.3.3
     enb:
         build: enb
         environment:
-            - UE_IP=10.0.0.3
+            - UE_IP=192.168.3.3
             - PHYSICAL_INTERFACE=eth0
-            - MME_IP=192.168.1.5
+            - MME_IP=10.0.5.1
         privileged: true
         cap_add:
             - NET_ADMIN
         networks:
             net1:
-                ipv4_address: 10.0.0.2
+                ipv4_address: 192.168.3.2
 networks:
     net1:
         ipam:
             config:
-                - subnet: 10.0.0.0/24
+                - subnet: 192.168.3.0/24
 

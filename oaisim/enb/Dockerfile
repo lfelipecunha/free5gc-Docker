@@ -58,7 +58,7 @@ RUn cd /tmp/protobuf-3.3.0/ && ./configure && make -j`nproc` && make install && 
 
 RUN apt-get install -y  linux-headers-`uname -r`
 
-RUN cd openairinterface5g/cmake_targets && ./build_oai --eNB -t ETHERNET -c --mu
+RUN cd openairinterface5g/cmake_targets && ./build_oai --eNB -t ETHERNET -c
 COPY nf_api_complement.conf /openairinterface5g/ci-scripts/conf_files/rcc.band7.tm1.nfapi.conf
 
 COPY docker-entrypoint.sh /root/

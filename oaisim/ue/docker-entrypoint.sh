@@ -9,7 +9,7 @@ function echo_error() {
     exit -1
 }
 
-function setup_nfapi() {
+function verify_env_vars() {
     if [ -z $PHYSICAL_INTERFACE ]; then
         echo_error "PHYSICAL_INTERFACE env var must be defined"
     fi
@@ -18,10 +18,15 @@ function setup_nfapi() {
         echo_error "eNB_IP env var must be defined"
     fi
 
+    if [ -z $NUM_UES ]; then
+	NUM_UES=1
+    fi
 
+}
+
+function setup_nfapi() {
     sed -i "s/\(local_n_if_name[ ]*\)=.*/\1= \"$PHYSICAL_INTERFACE\";/" $nfapi_file
 
-#    ip = $(ip addr | grep $PHYSICAL_INTERFACE -A 2 | grep inet[^6] | cut -d" " -f6 | cut -d"/" -f1)
     ip=$(ifconfig $PHYSICAL_INTERFACE | grep inet[^6] | sed 's/.*inet addr:\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/')
     echo "IP: $ip"
 
@@ -29,22 +34,28 @@ function setup_nfapi() {
     sed -i "s/\(local_n_address[ ]*\)=.*/\1= \"$ip\";/" $nfapi_file
 }
 
-data=$(cat /etc/hosts)
+function changing_hosts_file() {
+    data=$(cat /etc/hosts)
+    #remove duplicated entry of localhost, because bind function generate an error to bind socket on localhost
+    data2=$(echo $data | sed "s/\(::1[ ]*\)localhost/\1/")
+    echo $data2 > /etc/hosts
+}
 
-data2=$(echo $data | sed "s/\(::1[ ]*\)localhost/\1/")
+function init() {
+    echo "Verifiyng environments vars..."
+    verify_env_vars
 
-echo $data2 > /etc/hosts
+    echo "Changing host file..."
+    changing_hosts_file
 
-setup_nfapi
+    echo "Setup nfapi file..."
+    setup_nfapi
 
-echo "Initializing NAS with S1..."
+    echo "Initializing NAS with S1..."
+    cd $OPENAIR_HOME/cmake_targets/tools && source init_nas_s1 UE
 
-cd $OPENAIR_HOME/cmake_targets/tools && source init_nas_s1 UE
+    echo "Initializing UEs ..."
+    cd $OPENAIR_HOME/cmake_targets/lte_build_oai/build && sudo -E ./lte-uesoftmodem -O $nfapi_file --L2-emul 3 --num-ues $NUM_UES 2>&1
+}
 
-echo "Initializing UEs ..."
-#cat $nfapi_file
-
-cd $OPENAIR_HOME/cmake_targets/lte_build_oai/build && sudo -E ./lte-uesoftmodem -O $nfapi_file --L2-emul 3 --num-ues 1 2>&1
-
-
-
+init

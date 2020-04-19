@@ -14,6 +14,8 @@ services:
         networks:
             net1:
                 ipv4_address: 192.188.2.2
+        ports:
+            - 36412:36412
     upf:
         build: upf
         privileged: true
@@ -24,6 +26,8 @@ services:
         cap_add:
               - NET_ADMIN
         network_mode: "host"
+        environment:
+            - DN_INTERFACE=enp4s0
     smf:
         build: smf
         depends_on:
@@ -58,19 +62,19 @@ services:
         networks:
             net1:
                 ipv4_address: 192.188.2.11
-    enb:
-        build: srsLTE
-        depends_on:
-            - upf
-            - smf
-            - amf
-        #    - epc
-        privileged: true
-        volumes:
-            - /dev/bus/usb:/dev/bus/usb
-        networks:
-            net1:
-                ipv4_address: 192.188.2.253
+#    enb:
+#        build: srsLTE
+#        depends_on:
+#            - upf
+#            - smf
+#            - amf
+#        #    - epc
+#        privileged: true
+#        volumes:
+#            - /dev/bus/usb:/dev/bus/usb
+#        networks:
+#            net1:
+#                ipv4_address: 192.188.2.253
 #    epc:
 #        build:
 #            context: srsLTE
@@ -79,9 +83,44 @@ services:
 #        networks:
 #            net1:
 #                ipv4_address: 192.188.2.2
+    ue:
+        build: oaisim/ue
+        depends_on:
+            - enb
+        environment:
+            - eNB_IP=192.188.3.2
+            - PHYSICAL_INTERFACE=eth0
+        privileged: true
+        cap_add:
+            - NET_ADMIN
+        networks:
+            net2:
+                ipv4_address: 192.188.3.10
+    enb:
+        build: oaisim/enb
+        depends_on:
+            - amf
+        environment:
+            - UE_IP=192.188.2.200
+            - UE_INTERFACE=eth1
+            - MME_INTERFACE=eth0
+            - MME_IP=192.188.2.2
+        privileged: true
+        cap_add:
+            - NET_ADMIN
+        networks:
+            net1:
+                ipv4_address: 192.188.2.201
+            net2:
+                ipv4_address: 192.188.3.2
 networks:
     net1:
         ipam:
             driver: default
             config:
                 - subnet: 192.188.2.0/24
+    net2:
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.188.3.0/24
