@@ -27,7 +27,7 @@ function verify_env_vars() {
 function setup_nfapi() {
     sed -i "s/\(local_n_if_name[ ]*\)=.*/\1= \"$PHYSICAL_INTERFACE\";/" $nfapi_file
 
-    ip=$(ifconfig $PHYSICAL_INTERFACE | grep inet[^6] | sed 's/.*inet addr:\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/')
+    ip=$(ifconfig "$PHYSICAL_INTERFACE" | grep inet[^6] | sed 's/.*inet addr:\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/')
     echo "IP: $ip"
 
     sed -i "s/\(remote_n_address[ ]*\)= .*/\1= \"$eNB_IP\";/" $nfapi_file
