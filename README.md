@@ -7,7 +7,7 @@
 
 
 ## Base Image
-Each box of project is based on a compiled free5gc image. To build this image use the follow command:
+Each core service is based on a compiled free5gc image. To build this image use the follow command:
 ``sudo docker build -t free5gc-base .``
 
 ## Running
@@ -18,3 +18,8 @@ The web app is available into http://localhost:3000.
 
 User: admin
 Password: 1423
+
+
+## OAISIM
+This project uses OpenAirInterface enb and ue simulator.
+@TODO add how to configurate

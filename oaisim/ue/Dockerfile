@@ -35,9 +35,13 @@ RUN cd openairinterface5g/cmake_targets && sudo ./build_oai --UE  -x -t ETHERNET
 
 USER root
 
+RUN apt-get update && apt-get install -y curl
+
 COPY ue_eurecom_test_sfr.conf /openairinterface5g/openair3/NAS/TOOLS/
 
-RUN cd openairinterface5g/targets/bin && ./conf2uedata -c ../../openair3/NAS/TOOLS/ue_eurecom_test_sfr.conf -o ../../cmake_targets/lte_build_oai/build/
+COPY register_ues /bin
+
+RUN chmod +x /bin/register_ues
 
 COPY docker-entrypoint.sh /root/
 

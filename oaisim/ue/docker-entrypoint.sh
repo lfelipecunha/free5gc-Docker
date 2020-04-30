@@ -1,6 +1,7 @@
 #!/bin/bash
 
 nfapi_file="$OPENAIR_HOME/ci-scripts/conf_files/ue.nfapi.conf"
+chips_file="$OPENAIR_HOME/openair3/NAS/TOOLS/ue_eurecom_test_sfr.conf"
 
 function echo_error() {
     echo "Error"
@@ -18,8 +19,12 @@ function verify_env_vars() {
         echo_error "eNB_IP env var must be defined"
     fi
 
+    if [ -z $FREE5G_WEB_URL ]; then
+        echo_error "FREE5G_WEB_URL env var must be defined"
+    fi
+
     if [ -z $NUM_UES ]; then
-	NUM_UES=1
+        NUM_UES=1
     fi
 
 }
@@ -32,6 +37,16 @@ function setup_nfapi() {
 
     sed -i "s/\(remote_n_address[ ]*\)= .*/\1= \"$eNB_IP\";/" $nfapi_file
     sed -i "s/\(local_n_address[ ]*\)=.*/\1= \"$ip\";/" $nfapi_file
+
+}
+
+function setup_chips() {
+    register_ues $chips_file
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
+
+    cd $OPENAIR_HOME/targets/bin && ./conf2uedata -c $chips_file -o $OPENAIR_HOME/cmake_targets/lte_build_oai/build/
 }
 
 function changing_hosts_file() {
@@ -50,6 +65,12 @@ function init() {
 
     echo "Setup nfapi file..."
     setup_nfapi
+
+    echo "Generating UE data..."
+    setup_chips
+
+    echo "Creating oip1 device..."
+    sudo ip link add name oip1 type dummy
 
     echo "Initializing NAS with S1..."
     cd $OPENAIR_HOME/cmake_targets/tools && source init_nas_s1 UE
