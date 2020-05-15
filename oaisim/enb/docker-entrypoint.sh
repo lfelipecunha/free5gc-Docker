@@ -48,7 +48,4 @@ function setup_nfapi() {
 
 setup_nfapi
 
-cd $OPENAIR_HOME/cmake_targets && sudo -E ./lte_build_oai/build/lte-softmodem -O $nfapi_file 2>&1
-
-
-
+cd $OPENAIR_HOME/cmake_targets/ran_build/build && sudo -E ./lte-softmodem -O $nfapi_file 2>&1

@@ -81,7 +81,7 @@ while [ $i -le $NUM_UES ]; do
   MSIN=$(printf "%010d" $i)
   IMSI="$HPLMN$MSIN"
 
-  curl "$FREE5G_WEB_URL/api/db/Subscriber" \
+  status_code=$(curl -L "$FREE5G_WEB_URL/api/db/Subscriber" \
     -H 'Connection: keep-alive' \
     -H 'Accept: application/json, text/plain, */*' \
     -H "X-CSRF-TOKEN: $csrf" \
@@ -93,9 +93,15 @@ while [ $i -le $NUM_UES ]; do
     -H 'Accept-Language: en-US,en;q=0.9,pt;q=0.8,pt-BR;q=0.7' \
     -b /tmp/free5gc.txt \
     --data-binary '{"imsi":"'$IMSI'","security":{"k":"'$USIM_API_K'","amf":"8000","op_type":0,"op_value":"'$OPC'","op":null,"opc":"'$OPC'"},"ambr":{"downlink":1024000,"uplink":1024000},"pdn":[{"apn":"internet","qos":{"qci":9,"arp":{"priority_level":8,"pre_emption_capability":1,"pre_emption_vulnerability":1}}}]}' \
-    --compressed
+    --compressed \
+    --write-out %{http_code} --silent --output /dev/null)
 
-  ue_number=$((i-1))
+  # Remove if exists and not increment $i to try to create
+  if [ $status_code -eq 400 ]; then
+    curl -XDELETE "$FREE5G_WEB_URL/api/db/Subscriber/$IMSI" -b /tmp/free5gc.txt -H "X-CSRF-TOKEN: $csrf" --silent
+  else
+    ue_number=$((i-1))
+
 echo 'UE'$ue_number':
 {
     USER: {
@@ -133,5 +139,7 @@ echo 'UE'$ue_number':
     EHPLMN_LIST= ();
 };' >> $ues_file
 
-    i=$((i+1))
+     i=$((i+1))
+    
+   fi
 done

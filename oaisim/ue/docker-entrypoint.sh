@@ -46,7 +46,8 @@ function setup_chips() {
         exit 1
     fi
 
-    cd $OPENAIR_HOME/targets/bin && ./conf2uedata -c $chips_file -o $OPENAIR_HOME/cmake_targets/lte_build_oai/build/
+    cd $OPENAIR_HOME/targets/bin && ./conf2uedata -c $chips_file -o $OPENAIR_HOME/cmake_targets/ran_build/build/
+    cp $OPENAIR_HOME/cmake_targets/ran_build/build/.uisim.nvram0 $OPENAIR_HOME/targets/bin/
 }
 
 function changing_hosts_file() {
@@ -69,14 +70,9 @@ function init() {
     echo "Generating UE data..."
     setup_chips
 
-    echo "Creating oip1 device..."
-    sudo ip link add name oip1 type dummy
-
-    echo "Initializing NAS with S1..."
-    cd $OPENAIR_HOME/cmake_targets/tools && source init_nas_s1 UE
-
     echo "Initializing UEs ..."
-    cd $OPENAIR_HOME/cmake_targets/lte_build_oai/build && sudo -E ./lte-uesoftmodem -O $nfapi_file --L2-emul 3 --num-ues $NUM_UES 2>&1
+#    cd $OPENAIR_HOME/cmake_targets/lte_build_oai/build && sudo -E ./lte-uesoftmodem -O $nfapi_file --L2-emul 3 --num-ues $NUM_UES 2>&1
+    cd $OPENAIR_HOME/cmake_targets/ran_build/build && sudo -E ./lte-uesoftmodem -O $nfapi_file --L2-emul 3 --num-ues $NUM_UES --nums_ue_thread 1 --nokrnmod 1 2>&1
 }
 
 init
