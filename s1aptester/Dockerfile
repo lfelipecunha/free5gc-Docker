@@ -1,30 +1,16 @@
 FROM ubuntu:18.04
 
-RUN apt-get update && apt-get install -y git vim iputils-ping make gcc rsync net-tools
+RUN apt-get update && apt-get install -y python3-pip libsctp-dev vim iputils-ping git net-tools
+RUN git clone https://github.com/P1sec/pycrate.git pycrate
+RUN cd pycrate && python3 setup.py install
 
-RUN git clone https://github.com/facebookexperimental/S1APTester.git s1aptester
+RUN git clone https://github.com/P1sec/pysctp.git pysctp
+RUN cd pysctp && python3 setup.py install
 
-# resolvendo problema de compilação.
-COPY ts_utls.c /s1aptester/TestCntlrStub/src/ts_utls.c
+RUN mkdir /s1aptester
 
-RUN cd /s1aptester/TestCntlrApp/build && make cleanall
-RUN cd /s1aptester/TestCntlrApp/build && make 
-RUN cp /s1aptester/TestCntlrApp/lib/*  /usr/lib
+COPY tester.py /s1aptester
 
-RUN cd /s1aptester/Trfgen/build && make clean
-RUN cd /s1aptester/Trfgen/build && make 
-RUN cp /s1aptester/Trfgen/lib/*  /usr/lib
+WORKDIR /s1aptester
 
-RUN cd /s1aptester/TestCntlrStub/build/ && make clean
-RUN cd /s1aptester/TestCntlrStub/build/ && make
-COPY nbAppCfg.txt /s1aptester/TestCntlrStub/bin/nbAppCfg.txt
-
-#COPY exec.sh /exec.sh
-#RUN chmod +x /exec.sh
-#ENTRYPOINT ["/exec.sh"]
-
-
-
-
-
-
+CMD python3 tester.py

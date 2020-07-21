@@ -14,8 +14,6 @@ services:
         networks:
             net1:
                 ipv4_address: 192.188.2.2
-        ports:
-            - 36412:36412
     upf:
         build: upf
         privileged: true
@@ -51,9 +49,9 @@ services:
                 ipv4_address: 192.188.2.5
     s1aptester:
         build: s1aptester
-            networks:
-                net1:
-                    ipv4_address: 192.188.2.253
+        networks:
+            net1:
+                ipv4_address: 192.188.2.253
     webapp:
         build: webapp
         ports:
